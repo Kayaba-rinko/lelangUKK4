@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+
+class Petugas extends Authenticatable
+{
+    use HasFactory;
+    protected $table = 'petugas';
+    protected $guarded = [];
+    protected $primaryKey = 'id_petugas';
+    protected $fillable = [
+        'nama_petugas',
+        'username',
+        'password',
+        'id_level',
+    ];
+    public function level()
+    {
+        return $this->belongsTo(Level::class, 'id_level', 'id_level');
+    }
+    public function lelangs()
+    {
+        return $this->hasMany(Lelang::class, 'id_petugas', 'id_petugas');
+    }
+}
