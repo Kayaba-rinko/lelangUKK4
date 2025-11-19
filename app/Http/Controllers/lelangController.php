@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use App\Models\Lelang;
 use App\Models\Barang;
 use App\Models\historyLelang;
+use App\Models\Petugas;
 use Illuminate\Support\Facades\Auth;
 
 class lelangController extends Controller
@@ -151,5 +152,25 @@ class lelangController extends Controller
             ->get();
 
         return view('petugas.historyPetugas', compact('lelang', 'tgl_lelang', 'tanggal_akhir'));
+    }
+    public function laporanindex()
+    {
+        $petugas = Petugas::all();
+        $laporan = collect(); // kosong dulu
+
+        return view('petugas.laporanAdmin', compact('petugas', 'laporan'));
+    }
+
+    public function filter(Request $request)
+    {
+        $petugasId = $request->input('petugas_id');
+        $petugas = Petugas::all();
+
+        $laporan = Lelang::with(['barang', 'pemenang'])
+            ->where('id_petugas', $petugasId)
+            ->where('status', 'ditutup')
+            ->get();
+
+        return view('petugas.laporanAdmin', compact('laporan', 'petugas', 'petugasId'));
     }
 }

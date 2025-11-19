@@ -88,4 +88,7 @@ Route::middleware(['auth:petugas', 'isPetugas'])->group(function () {
     Route::get('/petugas/history', [lelangController::class, 'historypetugas'])->name('history.petugas');
     Route::get('/petugas/history/cari', [lelangController::class, 'historypetugascari'])->name('petugas.historyPetugas.cari');
     Route::get('/petugas/history/cari/filter', [lelangController::class, 'tanggal'])->name('petugas.historyPetugas.filter');
+
+    Route::get(('/petugas/laporan/admin'), [lelangController::class, 'laporanindex'])->name('laporan.admin');
+    Route::post('/petugas/laporan/admin/filter', [lelangController::class, 'filter'])->name('admin.laporan.filter');
 });
