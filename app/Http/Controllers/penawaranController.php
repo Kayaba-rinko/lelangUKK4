@@ -25,7 +25,7 @@ class penawaranController extends Controller
 
         return view('masyarakat.penawaran', compact('lelang'));
     }
-
+    
     public function bid($id_lelang)
     {
         $lelang = Lelang::with('barang')->findOrFail($id_lelang);
@@ -61,7 +61,6 @@ class penawaranController extends Controller
 
         return redirect()->route('masyarakat.penawaran')->with('success', 'Lelang berhasil dirubah!');
     }
-
     public function history()
     {
         $masyarakatId = Auth::guard('masyarakat')->id();
@@ -101,18 +100,15 @@ class penawaranController extends Controller
     }
     public function historycarimasyarakat(Request $request)
     {
-        $cari = $request->input('cari');
+        $cari = trim($request->input('cari', ''));
         $userId = Auth::guard('masyarakat')->id();
-        $history = HistoryLelang::with(['lelang.barang'])
-            ->where('id_masyarakat', $userId)
-            ->whereHas('lelang.barang', function ($query) use ($cari) {
-                $query->where('nama_barang', 'like', '%' . $cari . '%');
-            })
-            ->select('id_lelang', 'id_barang', 'id_masyarakat', 'penawaran_harga', 'created_at')
-            ->orderBy('created_at', 'DESC')
-            ->get()
-            ->unique('id_lelang');
-
+        $query = HistoryLelang::with(['lelang.barang'])->where('id_masyarakat', $userId)->orderBy('created_at', 'DESC');
+        if ($cari !== '') {
+            $query->whereHas('lelang.barang', function ($q) use ($cari) {
+                $q->where('nama_barang', 'like', '%' . $cari . '%');
+            });
+        }
+        $history = $query->get()->unique('id_lelang')->values();
         return view('masyarakat.dashboard', compact('history', 'cari'));
     }
     public function historyStatus(Request $request)
@@ -129,8 +125,10 @@ class penawaranController extends Controller
             if ($status === 'menang') return $isWinner;
             if ($status === 'kalah') return !$isWinner;
             return true;
-        })->values(); 
-        return view('masyarakat.dashboard', ['history' => $filtered,'status'  => $status,
+        })->values();
+        return view('masyarakat.dashboard', [
+            'history' => $filtered,
+            'status'  => $status,
         ]);
     }
 }

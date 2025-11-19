@@ -39,10 +39,7 @@ class petugasController extends Controller
     }
     public function update(Request $request, $id_petugas)
     {
-        $request->validate([
-            'nama_petugas' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:petugas,username,' . $id_petugas . ',id_petugas',
-            'password' => 'nullable|string|min:6',
+        $request->validate(['nama_petugas' => 'required|string|max:255','username' => 'required|string|max:255|unique:petugas,username,' . $id_petugas . ',id_petugas','password' => 'nullable|string|min:6',
             // 'id_level' => 'required|exists:levels,id_level',
         ]);
         $petugas = Petugas::findOrFail($id_petugas);

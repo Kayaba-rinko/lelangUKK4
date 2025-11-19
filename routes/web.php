@@ -33,9 +33,7 @@ Route::middleware(['auth:masyarakat', 'isMasyarakat'])->group(function () {
     Route::get('/masyarakat/penawaran/cari', [penawaranController::class, 'cari'])->name('masyarakat.penawaran.cari');
 
     Route::get('/masyarakat/history/{id_lelang}', [penawaranController::class, 'historyDetail'])->name('masyarakat.history.detail');
-
-    Route::get('/masyarakat/history/cari', [penawaranController::class, 'historycarimasyarakat'])->name('masyarakat.history.cari');
-
+    Route::get('/history/cari', [penawaranController::class, 'historycarimasyarakat'])->name('masyarakat.history.cari');
     Route::get('masyarakat/history/cari/filter', [penawaranController::class, 'historyStatus'])->name('masyarakat.history.filter');
 });
 Route::middleware(['auth:petugas', 'isPetugas'])->group(function () {
@@ -88,7 +86,6 @@ Route::middleware(['auth:petugas', 'isPetugas'])->group(function () {
     Route::get('/petugas/bukaTutup/cari', [lelangController::class, 'cari'])->name('petugas.bukaTutup.cari');
 
     Route::get('/petugas/history', [lelangController::class, 'historypetugas'])->name('history.petugas');
-
     Route::get('/petugas/history/cari', [lelangController::class, 'historypetugascari'])->name('petugas.historyPetugas.cari');
     Route::get('/petugas/history/cari/filter', [lelangController::class, 'tanggal'])->name('petugas.historyPetugas.filter');
 });

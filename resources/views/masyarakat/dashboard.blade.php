@@ -25,7 +25,7 @@
             <form action="{{ route('masyarakat.history.cari') }}" method="GET" class="history-form">
                 <div class="search-box">
                     <input type="text" name="cari" placeholder="Cari riwayat penawaran..."
-                        value="{{ $cari ?? '' }}">
+                        value="{{ old('cari', $cari ?? '') }}">
                     <button type="submit" class="btn-primary">🔍</button>
                 </div>
             </form>
