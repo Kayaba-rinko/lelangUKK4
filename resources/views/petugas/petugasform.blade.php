@@ -20,17 +20,17 @@
                 @endif
 
                 <label>Nama</label>
-                <input type="text" name="nama_petugas" value="{{ old('nama_petugas', $petugas->nama_petugas ?? '') }}" required>
+                <input type="text" style="font-size: 16px;width:98%" name="nama_petugas" value="{{ old('nama_petugas', $petugas->nama_petugas ?? '') }}" required>
 
-                <label>Username</label>
-                <input type="text" name="username" value="{{ old('username', $petugas->username ?? '') }}" required>
+                <label>NIK</label>
+                <input type="text" minlength="16" maxlength="16" style="font-size: 16px;width:98%" name="username" value="{{ old('username', $petugas->username ?? '') }}" required>
 
                 @if (!isset($petugas))
                     <label>Password</label>
-                    <input type="password" name="password" required>
+                    <input type="password" style="font-size: 16px;width:98%" name="password" required>
                 @else
                     <label>Password (kosongkan jika tidak diubah)</label>
-                    <input type="password" name="password">
+                    <input type="password" style="font-size: 16px;width:98%" name="password">
                 @endif
                 <input type="hidden" name="id_level" value="2">
                 <button type="submit" class="btn-primary mt-3">Simpan</button>

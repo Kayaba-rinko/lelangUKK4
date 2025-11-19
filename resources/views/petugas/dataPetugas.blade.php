@@ -4,7 +4,16 @@
     <div class="main-content">
         <div class="header">
             <h1>Data Petugas</h1>
-            <a href="{{ route('petugas.datapetugas.create') }}" class="btn-primary">Tambah User</a>
+            <div class="header-right">
+                <form action="{{ route('petugas.petugas.cari') }}" class="search-box">
+                    <input style="font-size: 14px" type="text" name="cari" placeholder="Cari Petugas..." value="{{ request('cari') }}">
+                    <button type="submit" class="btn-search">🔍</button>
+                </form>
+
+                <a href="{{ route('petugas.datapetugas.create') }}" class="btn-primary tambah-btn">
+                    Tambah Petugas
+                </a>
+            </div>
         </div>
 
         <div class="card-box">

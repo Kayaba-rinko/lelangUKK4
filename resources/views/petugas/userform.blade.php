@@ -17,16 +17,16 @@
                     @method('PUT')
                 @endif
                 <label>Nama</label>
-                <input type="text" name="name" value="{{ old('name', $masyarakat->name ?? '') }}" required>
-                <label>Username (NIK)</label>
-                <input type="text" name="username" value="{{ old('username', $masyarakat->username ?? '') }}" required>
+                <input type="text" style="font-size: 16px;width:98%" name="name" value="{{ old('name', $masyarakat->name ?? '') }}" required>
+                <label>NIK</label>
+                <input type="text" style="font-size: 16px;width:98%" name="username" value="{{ old('username', $masyarakat->username ?? '') }}" required>
                 <label>Alamat</label>
-                <input type="text" name="alamat" value="{{ old('alamat', $masyarakat->alamat ?? '') }}">
+                <input type="text" style="font-size: 16px;width:98%" name="alamat" value="{{ old('alamat', $masyarakat->alamat ?? '') }}">
                 <label>Telepon</label>
-                <input type="text" name="telp" value="{{ old('telp', $masyarakat->telp ?? '') }}">
+                <input type="text" style="font-size: 16px;width:98%" name="telp" value="{{ old('telp', $masyarakat->telp ?? '') }}">
                 @if (!isset($masyarakat))
                     <label>Password</label>
-                    <input type="password" name="password" required>
+                    <input type="password" style="font-size: 16px;width:98%" name="password" required>
                 @else
                     <input type="hidden" name="password" value="{{ $masyarakat->password }}">
                 @endif

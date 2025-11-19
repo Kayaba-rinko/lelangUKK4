@@ -20,7 +20,7 @@ class barangController extends Controller
     public function store(Request $request){
         $request->validate([
             'nama_barang' => 'required|string|max:255',
-            // 'tgl_masuk' => 'date',
+            'tgl_masuk' => 'date',
             'harga_awal' => 'required|numeric',
             'deskripsi_barang' => 'nullable|string',
             'gambar' => 'nullable|image|max:10800',
@@ -65,5 +65,12 @@ class barangController extends Controller
         $barang = Barang::findOrFail($id_barang);
         $barang->delete();
         return redirect()->route('petugas.barangdata')->with('success', 'Barang berhasil dihapus');
+    }
+
+    public function cari(Request $request)
+    {
+        $cari = $request->cari;
+        $barang = Barang::where('nama_barang', 'like', "%" . $cari . "%")->get();
+        return view('petugas.barangdata', compact('barang','cari'));
     }
 }

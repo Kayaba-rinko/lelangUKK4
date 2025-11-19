@@ -86,4 +86,10 @@ class userController extends Controller
 
         return redirect()->route('petugas.userdata')->with('success', 'User berhasil diaktifkan kembali');
     }
+    public function cari(Request $request)
+    {
+        $cari = $request->cari;
+        $masyarakat = Masyarakat::where('name', 'like', "%" . $cari . "%")->get();
+        return view('petugas.dataUser', data: compact('masyarakat','cari'));
+    }
 }

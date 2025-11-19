@@ -24,12 +24,19 @@ Route::post('/register', [authController::class, 'registerMasyarakat'])->name('r
 Route::post('/logout', [authController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth:masyarakat', 'isMasyarakat'])->group(function () {
-    Route::get('/masyarakat/dashboard', [penawaranController::class,'history'])->name('masyarakat.dashboard');
+    Route::get('/masyarakat/dashboard', [penawaranController::class, 'history'])->name('masyarakat.dashboard');
 
-    Route::get('/masyarakat/bid/{id_lelang}', [penawaranController::class,'bid'])->name('masyarakat.bid');
-    Route::post('/masyarakat/placeBid/{id_lelang}', [penawaranController::class,'placeBid'])->name('masyarakat.placebid');
+    Route::get('/masyarakat/bid/{id_lelang}', [penawaranController::class, 'bid'])->name('masyarakat.bid');
+    Route::post('/masyarakat/placeBid/{id_lelang}', [penawaranController::class, 'placeBid'])->name('masyarakat.placebid');
 
-    Route::get('/masyarakat/penawaran',[penawaranController::class,'index'])->name('masyarakat.penawaran');
+    Route::get('/masyarakat/penawaran', [penawaranController::class, 'index'])->name('masyarakat.penawaran');
+    Route::get('/masyarakat/penawaran/cari', [penawaranController::class, 'cari'])->name('masyarakat.penawaran.cari');
+
+    Route::get('/masyarakat/history/{id_lelang}', [penawaranController::class, 'historyDetail'])->name('masyarakat.history.detail');
+
+    Route::get('/masyarakat/history/cari', [penawaranController::class, 'historycarimasyarakat'])->name('masyarakat.history.cari');
+
+    Route::get('masyarakat/history/cari/filter', [penawaranController::class, 'historyStatus'])->name('masyarakat.history.filter');
 });
 Route::middleware(['auth:petugas', 'isPetugas'])->group(function () {
     Route::get('/petugas/dashboard', function () {
@@ -68,4 +75,20 @@ Route::middleware(['auth:petugas', 'isPetugas'])->group(function () {
 
     Route::put('/petugas/bukaTutup/{id_lelang}/tutup', [lelangController::class, 'tutuplelang'])->name('petugas.bukaTutup.tutup');
     Route::get('/petugas/bukaTutup/{id_lelang}/buka', [lelangController::class, 'bukalelang'])->name('petugas.bukaTutup.buka');
+
+    Route::get('/petugas/barangdata/cari', [barangController::class, 'cari'])->name('petugas.barang.cari');
+
+    Route::get('/petugas/datapetugas/cari', [petugasController::class, 'cari'])->name('petugas.petugas.cari');
+
+    Route::get('/petugas/userdata/cari', [userController::class, 'cari'])->name('petugas.userdata.cari');
+
+    Route::get('/petugas/laporan', [lelangController::class, 'laporan'])->name('laporan.petugas');
+    Route::get('/petugas/laporan/admin', [lelangController::class, 'laporanAdmin'])->name('laporan.admin');
+
+    Route::get('/petugas/bukaTutup/cari', [lelangController::class, 'cari'])->name('petugas.bukaTutup.cari');
+
+    Route::get('/petugas/history', [lelangController::class, 'historypetugas'])->name('history.petugas');
+
+    Route::get('/petugas/history/cari', [lelangController::class, 'historypetugascari'])->name('petugas.historyPetugas.cari');
+    Route::get('/petugas/history/cari/filter', [lelangController::class, 'tanggal'])->name('petugas.historyPetugas.filter');
 });

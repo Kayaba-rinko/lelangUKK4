@@ -9,8 +9,9 @@
     <form method="POST" action="{{ route('register.submit') }}">
         @csrf
         <input type="text" name="name" placeholder="Name" required autofocus>
-        <input type="text" name="username" placeholder="Username" required autofocus>
+        <input type="text" minlength="16" maxlength="16" name="username" placeholder="NIK" required autofocus>
         <input type="text" name="telp" placeholder="No Telp" required>
+        <input type="text" name="alamat" placeholder="Alamat" required>
         <input type="password" name="password" placeholder="Password" required>
         <input type="password" name="password_confirmation" placeholder="Confirm Password" required>
         <button type="submit"

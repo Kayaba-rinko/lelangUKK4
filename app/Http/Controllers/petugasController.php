@@ -10,12 +10,14 @@ class petugasController extends Controller
     public function index()
     {
         $petugas = Petugas::all();
-        return view('petugas.dataPetugas',compact('petugas'));
+        return view('petugas.dataPetugas', compact('petugas'));
     }
-    public function create(){
+    public function create()
+    {
         return view('petugas.petugasform');
     }
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $request->validate([
             'nama_petugas' => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:petugas,username',
@@ -30,11 +32,13 @@ class petugasController extends Controller
         $petugas->save();
         return redirect()->route('petugas.datapetugas')->with('success', 'Petugas berhasil ditambahkan');
     }
-    public function edit($id_petugas){
+    public function edit($id_petugas)
+    {
         $petugas = Petugas::findOrFail($id_petugas);
         return view('petugas.petugasform', compact('petugas'));
     }
-    public function update(Request $request, $id_petugas){
+    public function update(Request $request, $id_petugas)
+    {
         $request->validate([
             'nama_petugas' => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:petugas,username,' . $id_petugas . ',id_petugas',
@@ -51,9 +55,16 @@ class petugasController extends Controller
         $petugas->save();
         return redirect()->route('petugas.datapetugas')->with('success', 'Petugas berhasil diperbarui');
     }
-    public function destroy($id_petugas){
+    public function destroy($id_petugas)
+    {
         $petugas = Petugas::findOrFail($id_petugas);
         $petugas->delete();
         return redirect()->route('petugas.datapetugas')->with('success', 'Petugas berhasil dihapus');
+    }
+    public function cari(Request $request)
+    {
+        $cari = $request->cari;
+        $petugas = Petugas::where('nama_petugas', 'like', "%" . $cari . "%")->get();
+        return view('petugas.dataPetugas', compact('petugas', 'cari'));
     }
 }

@@ -4,8 +4,18 @@
     <div class="main-content">
         <div class="header">
             <h1>Data Barang</h1>
-            <a href="{{ route('petugas.barangdata.create') }}" class="btn-primary">Tambah Barang</a>
+            <div class="header-right">
+                <form action="{{ route('petugas.barang.cari') }}" class="search-box">
+                    <input style="font-size: 14px" type="text" name="cari" placeholder="Cari barang..." value="{{ request('cari') }}">
+                    <button type="submit" class="btn-search">🔍</button>
+                </form>
+
+                <a href="{{ route('petugas.barangdata.create') }}" class="btn-primary tambah-btn">
+                    Tambah Barang
+                </a>
+            </div>
         </div>
+
 
         <div class="card-box">
             <table class="table-dark">
