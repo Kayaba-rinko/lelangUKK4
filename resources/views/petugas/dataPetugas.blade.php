@@ -9,10 +9,7 @@
                     <input style="font-size: 14px" type="text" name="cari" placeholder="Cari Petugas..." value="{{ request('cari') }}">
                     <button type="submit" class="btn-search">🔍</button>
                 </form>
-
-                <a href="{{ route('petugas.datapetugas.create') }}" class="btn-primary tambah-btn">
-                    Tambah Petugas
-                </a>
+                <a href="{{ route('petugas.datapetugas.create') }}" class="btn-primary tambah-btn">Tambah Petugas</a>
             </div>
         </div>
 
@@ -36,7 +33,6 @@
                         <td>{{ $user->id_level }}</td>
                         <td>
                             <a href="{{ route('petugas.datapetugas.edit', $user->id_petugas) }}" class="btn-primary">Edit</a>
-
                             <form action="{{ route('petugas.datapetugas.destroy', $user->id_petugas) }}" method="POST" style="display:inline-block;">
                                 @csrf
                                 @method('DELETE')

@@ -3,20 +3,15 @@
 @section('content')
     <div class="main-content">
         <div class="header">
-            <h1>
-                {{ isset($barang) ? 'Update Barang' : 'Tambah Barang' }}
-            </h1>
+            <h1>{{ isset($barang) ? 'Update Barang' : 'Tambah Barang' }}</h1>
         </div>
 
         <div class="card-box">
-            <form
-                action="{{ isset($barang) ? route('petugas.barangdata.update', $barang->id_barang) : route('petugas.barangdata.store') }}"
-                method="POST" enctype="multipart/form-data">
+            <form action="{{ isset($barang) ? route('petugas.barangdata.update', $barang->id_barang) : route('petugas.barangdata.store') }}"method="POST" enctype="multipart/form-data">
                 @csrf
                 @if (isset($barang))
                     @method('PUT')
                 @endif
-
                 <label>Nama Barang</label>
                 <input type="text" name="nama_barang" style="font-size: 16px;width:95%" value="{{ old('nama_barang', $barang->nama_barang ?? '') }}" required>
                 <br>
@@ -39,7 +34,6 @@
                 <label>Gambar</label>
                 <br>
                 <input type="file" name="gambar" style="font-size: 16px;width:95%;" {{ isset($barang) ? '' : 'required' }}>
-
                 <button type="submit" class="btn-primary mt-3">Simpan</button>
             </form>
         </div>

@@ -24,8 +24,8 @@
         <div class="cariHistory">
             <form action="{{ route('masyarakat.history.cari') }}" method="GET" class="history-form">
                 <div class="search-box">
-                    <input type="text" name="cari" placeholder="Cari riwayat penawaran..."
-                        value="{{ old('cari', $cari ?? '') }}">
+                    <input type="text" name="cari"
+                        placeholder="Cari riwayat penawaran..."value="{{ old('cari', $cari ?? '') }}">
                     <button type="submit" class="btn-primary">🔍</button>
                 </div>
             </form>
@@ -41,32 +41,36 @@
                 </div>
             </form>
         </div>
-
         <div class="dashboard-grid">
             @foreach ($history as $item)
                 @php
-                    $highestBid = \App\Models\HistoryLelang::where('id_lelang', $item->id_lelang)
-                        ->orderBy('penawaran_harga', 'DESC')
-                        ->first();
+                    $highestBid = \App\Models\HistoryLelang::where('id_lelang', $item->id_lelang)->orderBy('penawaran_harga', 'DESC')->first();
                     $isWinner = $highestBid && $highestBid->id_masyarakat == Auth::guard('masyarakat')->id();
                 @endphp
-                <div class="dashboard-card">
-                    <div class="dashboard-img">
-                        <img src="{{ asset('storage/' . $item->lelang->barang->gambar) }}" alt="gambar">
-                        <span class="likes-badge">{{ $isWinner ? '🏆 Menang' : '❌ Kalah' }}</span>
+
+                <div class="lelang-card">
+                    <div class="card-img">
+                        <img src="{{ asset('storage/' . $item->lelang->barang->gambar) }}" alt="barang">
+                        <span class="likes" style="background: {{ $isWinner ? '#4caf50' : '#e74c3c' }};">{{ $isWinner ? '🏆 Menang' : '❌ Kalah' }}</span>
+                        <div class="countdown-badge" style="background: rgba(0,0,0,0.6)">🔎 History</div>
                     </div>
+
                     <h3 class="card-title">"{{ $item->lelang->barang->nama_barang }}"</h3>
-                    <div class="current-bid-section" style="font-size: 14px">
-                        <small>Penawaran Anda</small>
-                        <p>Rp {{ number_format($item->penawaran_harga) }}</p>
+
+                    <div class="card-info">
+                        <div>
+                            <small>Penawaran Anda</small>
+                            <p>Rp {{ number_format($item->penawaran_harga) }}</p>
+                        </div>
+                        <div class="price-box">
+                            <small>Highest Bid</small>
+                            <p>Rp {{ number_format($highestBid->penawaran_harga) }}</p>
+                        </div>
                     </div>
-                    <div class="current-bid-section" style="font-size: 14px">
-                        <small>Penawaran Tertinggi</small>
-                        <p>Rp {{ number_format($highestBid->penawaran_harga) }}</p>
-                    </div>
-                    <div style="margin-top:18px;">
-                        <a href="{{ route('masyarakat.history.detail', $item->id_lelang) }}"
-                            class="btn-primary"style="width:100%;display:block;text-align:center;">Lihat Detail</a>
+
+                    <div class="card-actions">
+                        <a href="{{ route('masyarakat.history.detail', $item->id_lelang) }}" class="btn-primary">Lihat
+                            Detail</a>
                     </div>
                 </div>
             @endforeach

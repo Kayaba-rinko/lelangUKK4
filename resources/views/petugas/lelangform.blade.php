@@ -8,8 +8,7 @@
     </div>
 
     <div class="card-box">
-        <form action="{{ isset($data) ? route('petugas.bukaTutup.update', $data->id_lelang) : route('petugas.bukaTutup.store') }}"
-              method="POST">
+        <form action="{{ isset($data) ? route('petugas.bukaTutup.update', $data->id_lelang) : route('petugas.bukaTutup.store') }}"method="POST">
             @csrf
             @if(isset($data))
                 @method('PUT')

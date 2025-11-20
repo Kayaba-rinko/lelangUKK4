@@ -37,26 +37,20 @@
                             <td>{{ $user->telp }}</td>
                             <td>{{ $user->status }}</td>
                             <td>
-                                <a href="{{ route('petugas.userdata.edit', $user->id_masyarakat) }}"
-                                    class="btn-primary">Edit</a>
-
-                                <form action="{{ route('petugas.userdata.destroy', $user->id_masyarakat) }}" method="POST"
-                                    style="display:inline-block;">
+                                <a href="{{ route('petugas.userdata.edit', $user->id_masyarakat) }}"class="btn-primary">Edit</a>
+                                <form action="{{ route('petugas.userdata.destroy', $user->id_masyarakat) }}" method="POST"style="display:inline-block;">
                                     @csrf
                                     @method('DELETE')
-                                    <button onclick="return confirm('Yakin ingin menghapus?')"
-                                        class="btn-primary">Hapus</button>
+                                    <button onclick="return confirm('Yakin ingin menghapus?')"class="btn-primary">Hapus</button>
                                 </form>
                                 @if ($user->status === 'aktif')
-                                    <form action="{{ route('petugas.userdata.blokir', $user->id_masyarakat) }}"
-                                        method="POST" style="display:inline">
+                                    <form action="{{ route('petugas.userdata.blokir', $user->id_masyarakat) }}"method="POST" style="display:inline">
                                         @csrf
                                         @method('PUT')
                                         <button class="btn-primary">Blokir</button>
                                     </form>
                                 @else
-                                    <form action="{{ route('petugas.userdata.aktifkan', $user->id_masyarakat) }}"
-                                        method="POST" style="display:inline">
+                                    <form action="{{ route('petugas.userdata.aktifkan', $user->id_masyarakat) }}"method="POST" style="display:inline">
                                         @csrf
                                         @method('PUT')
                                         <button class="btn-primary">Aktifkan</button>

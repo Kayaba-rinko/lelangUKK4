@@ -5,23 +5,17 @@
         <div class="header">
             <h1>History Lelang Petugas</h1>
             <div class="header-actions" style="display: flex; align-items:center; gap: 15px;">
-                <form action="{{ route('petugas.historyPetugas.cari') }}"
-                    class="search-box"style="display: flex;align-items:center;">
-                    <input style="font-size: 14px" type="text" name="cari" placeholder="Cari History..."
-                        value="{{ request('cari') }}">
+                <form action="{{ route('petugas.historyPetugas.cari') }}"class="search-box"style="display: flex;align-items:center;">
+                    <input style="font-size: 14px" type="text" name="cari" placeholder="Cari History..."value="{{ request('cari') }}">
                     <button type="submit" class="btn-search">🔍</button>
                 </form>
-                <form action="{{ route('petugas.historyPetugas.filter') }}" method="GET" class="search-box"
-                    style="display: flex; align-items:center; gap:10px; padding:6px 10px;">
+                <form action="{{ route('petugas.historyPetugas.filter') }}" method="GET" class="search-box" style="display: flex; align-items:center; gap:10px; padding:6px 10px;">
                     <label for="tgl_lelang" style="font-size:14px;">Dari:</label>
-                    <input type="date" name="tgl_lelang"
-                        style="font-size: 14px"value="{{ request('tgl_lelang') ?? ($tgl_lelang ?? '') }}" required>
+                    <input type="date" name="tgl_lelang" style="font-size: 14px"value="{{ request('tgl_lelang') ?? ($tgl_lelang ?? '') }}" required>
                     <label for="tanggal_akhir" style="font-size:14px;">Sampai:</label>
-                    <input type="date" name="tanggal_akhir"
-                        style="font-size: 14px"value="{{ request('tanggal_akhir') ?? ($tanggal_akhir ?? '') }}" required>
+                    <input type="date" name="tanggal_akhir" style="font-size: 14px"value="{{ request('tanggal_akhir') ?? ($tanggal_akhir ?? '') }}" required>
                     <button type="submit" class="btn-search">Filter</button>
                 </form>
-
             </div>
         </div>
 

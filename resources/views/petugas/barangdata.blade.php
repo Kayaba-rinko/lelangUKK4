@@ -9,10 +9,7 @@
                     <input style="font-size: 14px" type="text" name="cari" placeholder="Cari barang..." value="{{ request('cari') }}">
                     <button type="submit" class="btn-search">🔍</button>
                 </form>
-
-                <a href="{{ route('petugas.barangdata.create') }}" class="btn-primary tambah-btn">
-                    Tambah Barang
-                </a>
+                <a href="{{ route('petugas.barangdata.create') }}" class="btn-primary tambah-btn">Tambah Barang</a>
             </div>
         </div>
 
@@ -45,16 +42,11 @@
                                 @endif
                             </td>
                             <td>{{ $item->deskripsi_barang }}</td>
-                            <td>
-                                <a href="{{ route('petugas.barangdata.edit', $item->id_barang) }}"
-                                    class="btn-primary">Edit</a>
-
-                                <form action="{{ route('petugas.barangdata.destroy', $item->id_barang) }}" method="POST"
-                                    style="display:inline-block;">
+                            <td><a href="{{ route('petugas.barangdata.edit', $item->id_barang) }}"class="btn-primary">Edit</a>
+                                <form action="{{ route('petugas.barangdata.destroy', $item->id_barang) }}" method="POST"style="display:inline-block;">
                                     @csrf
                                     @method('DELETE')
-                                    <button onclick="return confirm('Yakin ingin menghapus?')"
-                                        class="btn-primary">Hapus</button>
+                                    <button onclick="return confirm('Yakin ingin menghapus?')"class="btn-primary">Hapus</button>
                                 </form>
                             </td>
                         </tr>

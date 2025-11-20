@@ -14,10 +14,7 @@
                 <select name="petugas_id" style="font-size:14px;margin:0 10px;">
                     <option value="">-- Semua Petugas --</option>
                     @foreach ($petugas as $p)
-                        <option value="{{ $p->id_petugas }}"
-                            {{ isset($petugasId) && $petugasId == $p->id_petugas ? 'selected' : '' }}>
-                            {{ $p->nama_petugas }}
-                        </option>
+                        <option value="{{ $p->id_petugas }}"{{ isset($petugasId) && $petugasId == $p->id_petugas ? 'selected' : '' }}>{{ $p->nama_petugas }}</option>
                     @endforeach
                 </select>
                 <button type="submit" class="btn-primary">Tampilkan Laporan</button>
@@ -27,22 +24,19 @@
 
         @if ($laporan)
             <div class="card-box">
-                <div
-                class="header-card-box"style="display: flex;flex-direction: row-reverse;flex-wrap: nowrap;align-content: flex-start;justify-content: space-between;">
-                <h2 style="align-items: end; display: flex; justify-content: end;">Total :
-                    {{ number_format($grandtotal) }}</h2>
-                    <a class="btn-primary" href="{{ route('petugas.cetak.laporan.admin') }}">Cetak</a>
-                    <form action="{{ route('admin.laporan.filter') }}" method="GET" class="search-box"
-                        style="display: flex; align-items:center; gap:10px; padding:6px 10px;max-width: 45%;">
-                        <label for="tgl_lelang" style="font-size:14px;">Dari:</label>
-                        <input type="date" name="tgl_lelang"
-                            style="font-size: 14px"value="{{ request('tgl_lelang') ?? ($tgl_lelang ?? '') }}" required>
-                        <label for="tanggal_akhir" style="font-size:14px;">Sampai:</label>
-                        <input type="date" name="tanggal_akhir"
-                            style="font-size: 14px"value="{{ request('tanggal_akhir') ?? ($tanggal_akhir ?? '') }}"
-                            required>
-                        <button type="submit" class="btn-search">Filter</button>
-                    </form>
+                <div class="header-card-box"style="display:flex; justify-content:space-between; align-items:center; gap:15px;">
+                    <h2 style="margin:0; font-size:18px;">Total : {{ number_format($grandtotal) }}</h2>
+                    <div style="display:flex; align-items:center; gap:15px;">
+                        <a class="btn-primary"href="{{ route('petugas.cetak.laporan.admin', ['petugas_id' => $petugasId ?? '','tgl_lelang' => $tgl_lelang ?? '','tanggal_akhir' => $tanggal_akhir ?? '', ]) }}"style="font-size: 16px; padding:12px;">Cetak</a>
+                        <form action="{{ route('admin.laporan.filter') }}" method="GET"
+                            class="search-box"style="display:flex; align-items:center; gap:10px;">
+                            <label for="tgl_lelang" style="font-size:14px;">Dari:</label>
+                            <input type="date" name="tgl_lelang"style="font-size:14px; padding:4px;"value="{{ request('tgl_lelang') ?? ($tgl_lelang ?? '') }}">
+                            <label for="tanggal_akhir" style="font-size:14px;">Sampai:</label>
+                            <input type="date" name="tanggal_akhir"style="font-size:14px; padding:4px;"value="{{ request('tanggal_akhir') ?? ($tanggal_akhir ?? '') }}">
+                            <button type="submit" class="btn-search" style="padding:6px 10px;">Filter</button>
+                        </form>
+                    </div>
                 </div>
                 <table class="table-dark">
                     <thead>
@@ -67,9 +61,9 @@
                                 <td>IDR {{ number_format($row->barang->harga_awal) }}</td>
                                 <td>
                                     @if ($row->status_view == 'DIBUKA')
-                                    -
+                                        -
                                     @else
-                                    {{ $row->pemenang->name ?? '-' }}
+                                        {{ $row->pemenang->name ?? '-' }}
                                     @endif
                                 </td>
                                 <td>
@@ -79,7 +73,6 @@
                                         -
                                     @endif
                                 </td>
-
                                 <td>{{ $row->status_view }}</td>
                             </tr>
                         @endforeach

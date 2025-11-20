@@ -3,7 +3,6 @@
 
 @php
     use Illuminate\Support\Facades\Auth;
-
     $user = Auth::guard('petugas')->user();
     $level = $user->level_id ?? $user->id_level ?? null; 
     // Admin = 1, Petugas = 2
@@ -11,7 +10,6 @@
 
 @section('content')
 <div class="main-content">
-
     <div class="header">
         <h1>
             @if($level == 1)
@@ -20,19 +18,12 @@
                 Dashboard Petugas
             @endif
         </h1>
-
         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">
             @csrf
         </form>
-
-        <a href="#"
-           onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-           class="btn-logout">
-            Logout
-        </a>
+        <a href="#"onclick="event.preventDefault(); document.getElementById('logout-form').submit();"class="btn-logout">Logout</a>
     </div>
 
-    {{-- TAMPILAN ADMIN (LEVEL 1) --}}
     @if($level == 1)
     <div class="stats-grid">
         <div class="stat-box">
@@ -50,7 +41,6 @@
     </div>
     @endif
 
-    {{-- TAMPILAN PETUGAS (LEVEL 2) --}}
     @if($level == 2)
     <div class="card-box">
         <h2>Upcoming Auctions</h2>
@@ -70,6 +60,5 @@
         </div>
     </div>
     @endif
-
 </div>
 @endsection

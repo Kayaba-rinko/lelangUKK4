@@ -19,16 +19,12 @@
                     </div>
                     <div class="meta-box">
                         <small>Tanggal Akhir</small>
-                        <p class="meta-value">
-                            {{ \Carbon\Carbon::parse($lelang->tanggal_akhir)->format('d M Y') }}
-                        </p>
+                        <p class="meta-value">{{ \Carbon\Carbon::parse($lelang->tanggal_akhir)->format('d M Y') }}</p>
                     </div>
                 </div>
-                {{-- <form action="{{ route('masyarakat.placeBid', $lelang->id_lelang) }}" method="POST"> --}}
                 <form action="{{ route('masyarakat.placebid', $lelang->id_lelang) }}" method="POST">
                     @csrf
                     <div class="input-bid-wrapper">
-                        {{-- <input type="hidden" name="id_lelang" value="{{ $lelang->id_lelang }}"> --}}
                         <input type="hidden" name="id_barang" value="{{ $lelang->id_barang }}">
                         <input type="hidden" name="id_masyarakat" value="{{ Auth::guard('masyarakat')->id() }}">
                         <input type="hidden" name="tgl_lelang" value="{{ $lelang->tgl_lelang }}">
@@ -62,9 +58,7 @@
                         <p class="empty-history">Belum ada penawaran.</p>
                     @endforelse
                 </div>
-
             </div>
         </div>
-
     </div>
 @endsection

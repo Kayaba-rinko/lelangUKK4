@@ -88,7 +88,7 @@ class penawaranController extends Controller
                 $isWinner = true;
             }
         }
-        return view('masyarakat.detailHistory', compact('lelang', 'history', 'bidKamu', 'isWinner', 'proses'));
+        return view('masyarakat.detailHistory', compact('lelang', 'history', 'bidKamu', 'isWinner', 'proses','highestBid'));
     }
     public function cari(Request $request)
     {
