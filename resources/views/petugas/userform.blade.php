@@ -19,7 +19,7 @@
                 <label>Nama</label>
                 <input type="text" style="font-size: 16px;width:98%" name="name" value="{{ old('name', $masyarakat->name ?? '') }}" required>
                 <label>NIK</label>
-                <input type="text" style="font-size: 16px;width:98%" name="username" value="{{ old('username', $masyarakat->username ?? '') }}" required>
+                <input type="text" style="font-size: 16px;width:98%" maxlength="16" minlength="16" name="username" value="{{ old('username', $masyarakat->username ?? '') }}" required>
                 <label>Alamat</label>
                 <input type="text" style="font-size: 16px;width:98%" name="alamat" value="{{ old('alamat', $masyarakat->alamat ?? '') }}">
                 <label>Telepon</label>

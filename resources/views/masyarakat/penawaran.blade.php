@@ -24,9 +24,9 @@
                         <span class="likes" style="background: linear-gradient(90deg, #6a1b9a, #8e44ad);">
                             {{ $item->status }}
                         </span>
-                        {{-- <div class="countdown-badge" data-end="{{ $item->tanggal_akhir }}">
+                        <div class="countdown-badge" data-end="{{ $item->tanggal_akhir }}">
                             🔥 <span class="time">-- : -- : -- : --</span>
-                        </div> --}}
+                        </div>
                     </div>
 
                     <h3 class="card-title">"{{ $item->barang->nama_barang }}"</h3>

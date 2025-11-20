@@ -6,6 +6,7 @@ use App\Http\Controllers\petugasController;
 use App\Http\Controllers\barangController;
 use App\Http\Controllers\lelangController;
 use App\Http\Controllers\penawaranController;
+use Faker\Guesser\Name;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -80,15 +81,18 @@ Route::middleware(['auth:petugas', 'isPetugas'])->group(function () {
 
     Route::get('/petugas/userdata/cari', [userController::class, 'cari'])->name('petugas.userdata.cari');
 
-    Route::get('/petugas/laporan', [lelangController::class, 'laporan'])->name('laporan.petugas');
-    Route::get('/petugas/laporan/admin', [lelangController::class, 'laporanAdmin'])->name('laporan.admin');
-
     Route::get('/petugas/bukaTutup/cari', [lelangController::class, 'cari'])->name('petugas.bukaTutup.cari');
 
     Route::get('/petugas/history', [lelangController::class, 'historypetugas'])->name('history.petugas');
     Route::get('/petugas/history/cari', [lelangController::class, 'historypetugascari'])->name('petugas.historyPetugas.cari');
-    Route::get('/petugas/history/cari/filter', [lelangController::class, 'tanggal'])->name('petugas.historyPetugas.filter');
+    Route::get('/petugas/history/filter', [lelangController::class, 'tanggal'])->name('petugas.historyPetugas.filter');
 
-    Route::get(('/petugas/laporan/admin'), [lelangController::class, 'laporanindex'])->name('laporan.admin');
-    Route::post('/petugas/laporan/admin/filter', [lelangController::class, 'filter'])->name('admin.laporan.filter');
+    Route::get('/petugas/laporan', [lelangController::class, 'laporan'])->name('laporan.petugas');
+    Route::get('/admin/laporan', [lelangController::class, 'laporanindex'])->name('laporan.admin');
+    Route::match(['GET', 'POST'],'/admin/laporan/filter',[lelangController::class, 'filter'])->name('admin.laporan.filter');
+
+    Route::get('/petugas/laporan/cetak/tanggal',[lelangController::class,'laporanpetugastanggal'])->name('petugas.cetak.laporan.tanggal');
+
+    Route::get('/petugas/laporan/cetak',[lelangController::class, 'cetaklaporanpetugas'])->name('petugas.cetak.laporan');
+    Route::get('/petugas/laporan/cetak/admin',[lelangController::class, 'cetaklaporanadmin'])->name('petugas.cetak.laporan.admin');
 });

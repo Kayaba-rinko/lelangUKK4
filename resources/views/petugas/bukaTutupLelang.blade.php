@@ -8,7 +8,8 @@
             <h1>Buka & Tutup Lelang</h1>
             <div class="header-right">
                 <form action="{{ route('petugas.bukaTutup.cari') }}" class="search-box">
-                    <input style="font-size: 14px" type="text" name="cari" placeholder="Cari Lelang..." value="{{ request('cari') }}">
+                    <input style="font-size: 14px" type="text" name="cari" placeholder="Cari Lelang..."
+                        value="{{ request('cari') }}">
                     <button type="submit" class="btn-search">🔍</button>
                 </form>
                 <a href="{{ route('petugas.bukaTutup.create') }}" class="btn-primary">Tambah Lelang</a>
@@ -19,7 +20,7 @@
             <table class="table-dark">
                 <thead>
                     <tr>
-                        <th>ID Lelang</th>
+                        <th>No Lelang</th>
                         <th>Nama Barang</th>
                         <th>Tanggal Mulai</th>
                         <th>Tanggal Akhir</th>
@@ -32,7 +33,7 @@
                 <tbody>
                     @foreach ($lelang as $lelangu)
                         <tr>
-                            <td>{{ $lelangu->id_lelang }}</td>
+                            <td>{{ $loop->iteration }}</td>
                             <td>{{ $lelangu->barang->nama_barang }}</td>
                             <td>{{ $lelangu->tgl_lelang }}</td>
                             <td>{{ $lelangu->tanggal_akhir }}</td>
@@ -49,10 +50,12 @@
                                         onclick="return confirm('Yakin ingin menghapus lelang ini?')"class="btn-primary">Hapus</button>
                                 </form>
                                 @if ($lelangu->status === 'dibuka')
-                                    <form action="{{ route('petugas.bukaTutup.tutup', $lelangu->id_lelang) }}"method="POST" style="display:inline-block;">
+                                    <form action="{{ route('petugas.bukaTutup.tutup', $lelangu->id_lelang) }}"method="POST"
+                                        style="display:inline-block;">
                                         @csrf
                                         @method('PUT')
-                                        <button onclick="return confirm('Yakin ingin menutup lelang ini?')"class="btn-primary">Tutup</button>
+                                        <button
+                                            onclick="return confirm('Yakin ingin menutup lelang ini?')"class="btn-primary">Tutup</button>
                                     </form>
                                 @endif
                             </td>

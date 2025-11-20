@@ -12,7 +12,7 @@
     <form method="POST" action="{{ route('login.petugas.submit') }}">
         @csrf
 
-        <input type="text" minlength="16" maxlength="16" name="username" placeholder="Username" required autofocus>
+        <input type="text" name="username" placeholder="Username" required autofocus>
         <input type="password" name="password" placeholder="Password" required>
 
         <button type="submit" class="btn-login">

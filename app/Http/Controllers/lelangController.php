@@ -36,7 +36,6 @@ class lelangController extends Controller
             'id_barang' => 'required|exists:barangs,id_barang',
             'tanggal_akhir' => 'required|date|after_or_equal:today',
             'tgl_lelang' => 'required|date',
-            // 'harga_akhir' => 'required|numeric',
             'harga_awal' => 'required|numeric',
         ]);
         $barang = Barang::findOrFail($request->id_barang);
@@ -108,7 +107,6 @@ class lelangController extends Controller
         return view('petugas.bukaTutupLelang', compact('lelang', 'cari'));
     }
 
-    // history lelang sesuai dengan lelang yang di kelola petugas
     public function historypetugas()
     {
         $petugasId = Auth::guard('petugas')->id();
@@ -144,33 +142,141 @@ class lelangController extends Controller
                 $query->whereHas('lelang', function ($q) use ($tgl_lelang, $tanggal_akhir) {
                     $q->whereBetween('tgl_lelang', [$tgl_lelang, $tanggal_akhir]);
                 });
-            })
-            ->pluck('id_lelang')
-            ->unique();
-        $lelang = Lelang::with(['barang', 'pemenang'])
-            ->whereIn('id_lelang', $filtered)
-            ->get();
+            })->pluck('id_lelang')->unique();
+        $lelang = Lelang::with(['barang', 'pemenang'])->whereIn('id_lelang', $filtered)->get();
 
         return view('petugas.historyPetugas', compact('lelang', 'tgl_lelang', 'tanggal_akhir'));
     }
+    // laporan admin
     public function laporanindex()
     {
-        $petugas = Petugas::all();
-        $laporan = collect(); // kosong dulu
+        $petugas = Petugas::where('nama_petugas', '!=', 'admin')->get();
+        $laporan = Lelang::with(['barang', 'pemenang', 'petugas'])->get()->map(function ($item) {
+            $adaPemenang = HistoryLelang::where('id_lelang', $item->id_lelang)->exists();
 
-        return view('petugas.laporanAdmin', compact('petugas', 'laporan'));
+            if ($item->status == 'dibuka') {
+                $item->status_view = 'PROSES LELANG';
+                $item->harga_bid_view = null;
+            } elseif ($item->status == 'ditutup' && !$adaPemenang) {
+                $item->status_view = 'DITUTUP';
+                $item->harga_bid_view = null;
+                $item->pemenang->name = null;
+            } else {
+                $item->status_view = 'SELESAI';
+                $item->harga_bid_view = $item->harga_akhir;
+            }
+            return $item;
+        });
+        $grandtotal = $laporan->where('status', 'ditutup')->whereNotNull('id_masyarakat')->sum('harga_akhir');
+        return view('petugas.laporanAdmin', compact('laporan', 'petugas', 'grandtotal'));
     }
 
     public function filter(Request $request)
     {
         $petugasId = $request->input('petugas_id');
-        $petugas = Petugas::all();
+        $tgl_lelang = $request->input('tgl_lelang');
+        $tanggal_akhir = $request->input('tanggal_akhir');
+        $petugas = Petugas::where('nama_petugas', '!=', 'admin')->get();
+        $laporan = Lelang::with(['barang', 'pemenang', 'petugas'])->when($petugasId, function ($q) use ($petugasId) {
+            $q->where('id_petugas', $petugasId);
+        })->when($tgl_lelang && $tanggal_akhir, function ($q) use ($tgl_lelang, $tanggal_akhir) {
+            $q->whereBetween('tgl_lelang', [$tgl_lelang, $tanggal_akhir]);
+        })->get()->map(function ($item) {
+            $adaBid = HistoryLelang::where('id_lelang', $item->id_lelang)->exists();
+            if ($item->status == 'dibuka') {
+                $item->status_view = 'PROSES LELANG';
+                $item->harga_bid_view = null;
+            } elseif ($item->status == 'ditutup' && !$adaBid) {
+                $item->status_view = 'DITUTUP';
+                $item->harga_bid_view = null;
+                $item->pemenang->name = null;
+            } else {
+                $item->status_view = 'SELESAI';
+                $item->harga_bid_view = $item->harga_akhir;
+            }
+            return $item;
+        });
+        $grandtotal = $laporan->filter(fn($lelang_status) => $lelang_status->status_view == 'SELESAI')->sum('harga_bid_view');
 
-        $laporan = Lelang::with(['barang', 'pemenang'])
+        return view('petugas.laporanAdmin', compact('laporan', 'petugas', 'petugasId', 'tgl_lelang', 'tanggal_akhir', 'grandtotal'));
+    }
+    public function laporan()
+    {
+        $petugasId = Auth::guard('petugas')->id();
+        $lelang = Lelang::with(['barang', 'pemenang'])
             ->where('id_petugas', $petugasId)
             ->where('status', 'ditutup')
             ->get();
 
-        return view('petugas.laporanAdmin', compact('laporan', 'petugas', 'petugasId'));
+        return view('petugas.laporan', compact('lelang'));
+    }
+    public function laporanpetugastanggal(Request $request)
+    {
+        $petugasId = Auth::guard('petugas')->id();
+        $tgl_lelang = $request->input('tgl_lelang');
+        $tanggal_akhir = $request->input('tanggal_akhir');
+        $fillterTanggal = Lelang::with(['barang'])
+            ->where('id_petugas', $petugasId)
+            ->where('status', 'ditutup')
+            ->when($tgl_lelang && $tanggal_akhir, function ($query) use ($tgl_lelang, $tanggal_akhir) {
+                $query->whereBetween('tgl_lelang', [$tgl_lelang, $tanggal_akhir]);
+            })
+            ->get();
+            
+        $lelang = Lelang::with(['barang'])->whereIn('id_lelang', $fillterTanggal->pluck('id_lelang'))->get();
+        return view('petugas.laporan',compact('petugasId','tgl_lelang','tanggal_akhir','fillterTanggal','lelang'));
+    }
+    public function cetaklaporanpetugas()
+    {
+        // $petugas = Petugas::where('nama_petugas', '!=', 'admin')->get();
+        $petugasId = Auth::guard('petugas')->id();
+        $laporan = Lelang::with(['barang', 'pemenang', 'petugas'])->where('id_petugas', $petugasId)->get()->map(function ($item) {
+            $adaPemenang = HistoryLelang::where('id_lelang', $item->id_lelang)->exists();
+
+            if ($item->status == 'dibuka') {
+                $item->status_view = 'PROSES LELANG';
+                $item->harga_bid_view = null;
+            } elseif ($item->status == 'ditutup' && !$adaPemenang) {
+                $item->status_view = 'DITUTUP';
+                $item->harga_bid_view = null;
+                $item->pemenang->name = null;
+            } else {
+                $item->status_view = 'SELESAI';
+                $item->harga_bid_view = $item->harga_akhir;
+            }
+            return $item;
+        });
+        $totallelang = $laporan->unique('id_lelang')->count();
+        $grandtotal = $laporan->where('status', 'ditutup')->whereNotNull('id_masyarakat')->sum('harga_akhir');
+        return view('petugas.cetakpetugas', compact('petugasId', 'laporan', 'grandtotal', 'totallelang'));
+    }
+
+    public function cetaklaporanadmin(Request $request)
+    {
+        $petugasId = $request->input('petugas_id');
+        $tgl_lelang = $request->input('tgl_lelang');
+        $tgl_akhir = $request->input('tanggal_akhir');
+
+        $laporan = Lelang::with(['barang', 'pemenang', 'petugas'])->where('id_petugas', $petugasId)->get()->map(function ($item) {
+            $adaPemenang = HistoryLelang::where('id_lelang', $item->id_lelang)->exists();
+            if ($item->status == 'dibuka') {
+                $item->status_view = 'PROSES LELANG';
+                $item->harga_bid_view = null;
+            } elseif ($item->status == 'ditutup' && !$adaPemenang) {
+                $item->status_view = 'DITUTUP';
+                $item->harga_bid_view = null;
+                $item->pemenang->name = null;
+            } else {
+                $item->status_view = 'SELESAI';
+                $item->harga_bid_view = $item->harga_akhir;
+            }
+            return $item;
+        });
+        if ($tgl_lelang != null && $tgl_akhir != null) {
+            $laporan->whereBetween($tgl_lelang, $tgl_akhir);
+        }
+        $totallelang = $laporan->unique('id_lelang')->count();
+        $grandtotal = $laporan->where('status', 'ditutup')->whereNotNull('id_masyarakat')->sum('harga_akhir');
+        return view('petugas.cetapadmin', compact('petugasId', 'laporan', 'grandtotal', 'totallelang'));
     }
 }

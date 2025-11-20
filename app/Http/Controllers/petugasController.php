@@ -40,7 +40,7 @@ class petugasController extends Controller
     public function update(Request $request, $id_petugas)
     {
         $request->validate(['nama_petugas' => 'required|string|max:255','username' => 'required|string|max:255|unique:petugas,username,' . $id_petugas . ',id_petugas','password' => 'nullable|string|min:6',
-            // 'id_level' => 'required|exists:levels,id_level',
+            'id_level' => 'required|exists:levels,id_level',
         ]);
         $petugas = Petugas::findOrFail($id_petugas);
         $petugas->nama_petugas = $request->nama_petugas;
@@ -48,7 +48,7 @@ class petugasController extends Controller
         if ($request->filled('password')) {
             $petugas->password = bcrypt($request->password);
         }
-        $petugas->id_level = 2;
+        $petugas->id_level = $request->id_level;
         $petugas->save();
         return redirect()->route('petugas.datapetugas')->with('success', 'Petugas berhasil diperbarui');
     }
