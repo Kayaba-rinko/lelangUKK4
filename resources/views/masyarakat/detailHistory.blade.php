@@ -22,7 +22,7 @@
                     <div class="meta-box"><small>Status Anda</small><p class="meta-value" style="font-weight:bold;color: {{ $isWinner ? '#3dbf33' : '#d9534f' }}">{{ $proses ? 'PENDING' : ($isWinner ? 'MENANG' : 'KALAH') }}</p></div>
                     <div class="meta-box"><small>Status Lelang</small><p class="meta-value" style="font-weight:bold;color: {{ $proses ? '#ff0018' : '#5555ff' }}">{{ $proses ? 'PROSES' : 'DITUTUP' }}</p></div>
                 </div>
-                <div class="your-bid-box" style="margin-top:20px;"><small>Penawaran Anda</small><p class="meta-value" style="font-size:18px;font-weight:bold;">Rp{{ number_format($bidKamu->penawaran_harga) }}</p></div>
+                <div class="your-bid-box" style="margin-top:20px;"><small>Penawaran Anda</small><p class="meta-value" style="font-size:16px;font-weight:bold;">Rp{{ number_format($bidKamu->penawaran_harga) }}</p></div>
                 <h3 class="section-title" style="margin-top:30px;">Riwayat Penawaran</h3>
                 <div class="bid-history">
                     @forelse($history as $h)

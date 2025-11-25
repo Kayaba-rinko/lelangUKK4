@@ -60,12 +60,14 @@ class authController extends Controller
             'name' => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:masyarakat,username',
             'password' => 'required|string|min:6|confirmed',
+            'alamat' => 'required|string',
             'telp' => 'nullable|string|max:15|unique:masyarakat,telp',
         ]);
         $Masyarakat = Masyarakat::create([
             'name' => $request->name,
             'username' => $request->username,
             'password' => Hash::make($request->password),
+            'alamat' => $request->alamat,
             'telp' => $request->telp,
         ]);
         Auth::guard('masyarakat')->login($Masyarakat);

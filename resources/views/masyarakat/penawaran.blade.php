@@ -8,7 +8,7 @@
             <div class="header-right">
                 <form action="{{ route('masyarakat.penawaran.cari') }}" method="GET">
                     <div class="search-box">
-                        <input type="text" style="font-size: 14px" name="cari" placeholder="Cari barang..." value="{{ $cari ?? '' }}">
+                        <input type="text" style="font-size:16px" name="cari" placeholder="Cari barang..." value="{{ $cari ?? '' }}">
                         <button type="submit" class="btn-primary">🔍</button>
                     </div>
                 </form>
@@ -30,7 +30,7 @@
                         </div>
                         <div class="price-box">
                             <small>Current Bid</small>
-                            <p>{{ number_format($item->harga_akhir) }} IDR</p>
+                            <p>Rp.{{ number_format($item->harga_akhir) }}</p>
                         </div>
                     </div>
                     <div class="card-actions">
@@ -49,7 +49,7 @@
                 let diff = endDate - now;
 
                 if (diff <= 0) {
-                    timeBox.innerHTML = "Ended";
+                    timeBox.innerHTML = "Berakhir";
                     badge.style.background = "#442222";
                     return;
                 }

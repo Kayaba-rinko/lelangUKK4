@@ -7,7 +7,7 @@
             <h1>Buka & Tutup Lelang</h1>
             <div class="header-right">
                 <form action="{{ route('petugas.bukaTutup.cari') }}" class="search-box">
-                    <input style="font-size: 14px" type="text" name="cari" placeholder="Cari Lelang..."value="{{ request('cari') }}">
+                    <input style="font-size:16px" type="text" name="cari" placeholder="Cari Lelang..."value="{{ request('cari') }}">
                     <button type="submit" class="btn-search">🔍</button>
                 </form>
                 <a href="{{ route('petugas.bukaTutup.create') }}" class="btn-primary">Tambah Lelang</a>
@@ -15,7 +15,7 @@
         </div>
 
         <div class="card-box">
-            <table class="table-dark">
+            <table class="table-dark" id="dataTable">
                 <thead>
                     <tr>
                         <th>No Lelang</th>
@@ -56,6 +56,13 @@
                     @endforeach
                 </tbody>
             </table>
+            <div style="text-align: center; margin-top: 20px;">
+            @if (isset($cari) || isset($tgl_lelang))
+                {{ $lelang->appends(request()->query())->links('vendor.pagination.default') }}
+            @else
+                {{ $lelang->links('vendor.pagination.default') }}
+            @endif
+            </div>
         </div>
     </div>
 @endsection

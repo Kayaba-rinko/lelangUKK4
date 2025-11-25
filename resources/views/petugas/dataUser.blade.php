@@ -6,7 +6,7 @@
             <h1>Data User</h1>
             <div class="header-right">
                 <form action="{{ route('petugas.userdata.cari') }}" class="search-box">
-                    <input style="font-size: 14px" type="text" name="cari" placeholder="Cari Petugas..."value="{{ request('cari') }}">
+                    <input style="font-size: 16px" type="text" name="cari" placeholder="Cari Petugas..."value="{{ request('cari') }}">
                     <button type="submit" class="btn-search">🔍</button>
                 </form>
                 <a href="{{ route('petugas.userdata.create') }}" class="btn-primary tambah-btn">Tambah User</a>
@@ -14,7 +14,7 @@
         </div>
 
         <div class="card-box">
-            <table class="table-dark">
+            <table class="table-dark" id="dataTable">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -61,6 +61,13 @@
                     @endforeach
                 </tbody>
             </table>
+            <div style="text-align: center; margin-top: 20px;">
+            @if (isset($cari) || isset($tgl_lelang))
+                {{ $masyarakat->appends(request()->query())->links('vendor.pagination.default') }}
+            @else
+                {{ $masyarakat->links('vendor.pagination.default') }}
+            @endif
+            </div>
         </div>
     </div>
 @endsection

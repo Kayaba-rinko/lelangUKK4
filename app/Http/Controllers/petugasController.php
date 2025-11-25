@@ -9,7 +9,7 @@ class petugasController extends Controller
 {
     public function index()
     {
-        $petugas = Petugas::all();
+        $petugas = Petugas::orderBy('id_petugas')->paginate(5);
         return view('petugas.dataPetugas', compact('petugas'));
     }
     public function create()
@@ -61,7 +61,7 @@ class petugasController extends Controller
     public function cari(Request $request)
     {
         $cari = $request->cari;
-        $petugas = Petugas::where('nama_petugas', 'like', "%" . $cari . "%")->get();
+        $petugas = Petugas::where('nama_petugas', 'like', "%" . $cari . "%")->orderBy('id_petugas')->paginate(5);
         return view('petugas.dataPetugas', compact('petugas', 'cari'));
     }
 }

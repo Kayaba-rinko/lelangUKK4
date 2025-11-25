@@ -14,9 +14,26 @@ class userSeeder extends Seeder
     {
         $dataMasyarakat = [
             [
-                'name' => 'Masyarakat ',
-                'username' => 'Masayarakat',
-                'telp' => '081234567890',
+                'name' => 'John Doe 1 ',
+                'username' => '1111111111111111',
+                'telp' => '081256881234',
+                'alamat' => 'Jl. Dummy No.34',
+                'status' => 'aktif',
+                'password' => '123456789',
+            ],
+            [
+                'name' => 'John Doe 2 ',
+                'username' => '2222222222222222',
+                'telp' => '081256881235',
+                'alamat' => 'Jl. Dummy No.65',
+                'status' => 'aktif',
+                'password' => '123456789',
+            ],
+            [
+                'name' => 'John Doe 3 ',
+                'username' => '3333333333333333',
+                'telp' => '081256881236',
+                'alamat' => 'Jl. Dummy No.78',
                 'status' => 'aktif',
                 'password' => '123456789',
             ],
@@ -28,6 +45,7 @@ class userSeeder extends Seeder
                     'name' => $item['name'],
                     'username' => $item['username'],
                     'telp' => $item['telp'],
+                    'alamat' =>$item['alamat'],
                     'status' => $item['status'],
                     'password' => bcrypt($item['password']),
                 ]
@@ -45,14 +63,20 @@ class userSeeder extends Seeder
         }
         $dataPetugas =[
             [
-                'nama_petugas' => 'admin',
+                'nama_petugas' => 'Hoya',
                 'username' => 'admin',
                 'password' => '123456789',
                 'id_level' => 1,
             ],
             [
-                'nama_petugas' => 'Petugas1',
-                'username' => 'petugas1',
+                'nama_petugas' => 'Kama',
+                'username' => 'ptg01',
+                'password' => '123456789',
+                'id_level' => 2,
+            ],
+            [
+                'nama_petugas' => 'Itma',
+                'username' => 'ptg02',
                 'password' => '123456789',
                 'id_level' => 2,
             ],

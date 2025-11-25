@@ -9,7 +9,7 @@ class userController extends Controller
 {
     public function index()
     {
-        $masyarakat = Masyarakat::all();
+        $masyarakat = Masyarakat::orderBy('id_masyarakat')->paginate(5);
         return view('petugas.dataUser', compact('masyarakat'));
     }
     public function create()
@@ -89,7 +89,7 @@ class userController extends Controller
     public function cari(Request $request)
     {
         $cari = $request->cari;
-        $masyarakat = Masyarakat::where('name', 'like', "%" . $cari . "%")->get();
+        $masyarakat = Masyarakat::where('name', 'like', "%" . $cari . "%")->orderBy('id_masyarakat')->paginate(5);
         return view('petugas.dataUser', data: compact('masyarakat','cari'));
     }
 }

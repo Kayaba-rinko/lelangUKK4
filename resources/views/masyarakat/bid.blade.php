@@ -29,9 +29,9 @@
                         <input type="hidden" name="id_masyarakat" value="{{ Auth::guard('masyarakat')->id() }}">
                         <input type="hidden" name="tgl_lelang" value="{{ $lelang->tgl_lelang }}">
                         @if ($lelang->harga_akhir != $lelang->harga_awal)
-                        <input type="number" min="{{ $lelang->harga_akhir + 1 }}" style="font-size: 14px" name="harga_akhir" placeholder="Masukkan jumlah penawaran..." class="input-bid"required>
+                        <input type="number" min="{{ $lelang->harga_akhir + 1 }}" style="font-size: 16px" name="harga_akhir" placeholder="Masukkan jumlah penawaran..." class="input-bid"required>
                         @else
-                        <input type="number" min="{{ $lelang->harga_awal + 1 }}" style="font-size: 14px" name="harga_akhir" placeholder="Masukkan jumlah penawaran..." class="input-bid"required>
+                        <input type="number" min="{{ $lelang->harga_awal + 1 }}" style="font-size: 16px" name="harga_akhir" placeholder="Masukkan jumlah penawaran..." class="input-bid"required>
                         @endif
                         <button class="btn-primary btn-bid">Kirim Penawaran</button>
                     </div>

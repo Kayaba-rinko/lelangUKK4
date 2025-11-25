@@ -8,6 +8,7 @@ use App\Models\Lelang;
 use App\Models\Barang;
 use App\Models\historyLelang;
 use App\Models\Petugas;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 
 class lelangController extends Controller
@@ -15,7 +16,7 @@ class lelangController extends Controller
     public function index()
     {
         $petugasId = Auth::guard('petugas')->id();
-        $lelang = Lelang::with('barang')->where('id_petugas', $petugasId)->get();
+        $lelang = Lelang::with('barang')->where('id_petugas', $petugasId)->orderBy('id_lelang')->paginate(5);
         foreach ($lelang as $item) {
             if ($item->tanggal_akhir && $item->tanggal_akhir < today()) {
                 $item->status = 'ditutup';
@@ -62,9 +63,9 @@ class lelangController extends Controller
     public function update(Request $request, $id_lelang)
     {
         $request->validate([
-            'id_barang'      => 'required|exists:barangs,id_barang',
-            'tanggal_akhir'  => 'required|date',
-            'harga_awal'     => 'required|numeric',
+            'id_barang' => 'required|exists:barangs,id_barang',
+            'tanggal_akhir' => 'required|date',
+            'harga_awal' => 'required|numeric',
         ]);
         $petugasId = Auth::guard('petugas')->id();
         $lelang = Lelang::where('id_petugas', $petugasId)->findOrFail($id_lelang);
@@ -102,7 +103,7 @@ class lelangController extends Controller
         $petugasId = Auth::guard('petugas')->id();
         $lelang = Lelang::with('barang')->where('id_petugas', $petugasId)->whereHas('barang', function ($query) use ($cari) {
             $query->where('nama_barang', 'like', "%" . $cari . "%");
-        })->get();
+        })->orderBy('id_lelang')->paginate(5);
 
         return view('petugas.bukaTutupLelang', compact('lelang', 'cari'));
     }
@@ -112,7 +113,7 @@ class lelangController extends Controller
         $petugasId = Auth::guard('petugas')->id();
         $tgl_lelang = null;
         $tanggal_akhir = null;
-        $lelang = Lelang::with(['barang', 'pemenang'])->where('id_petugas', $petugasId)->where('status', 'ditutup')->get();
+        $lelang = Lelang::with(['barang', 'pemenang'])->where('id_petugas', $petugasId)->where('status', 'ditutup')->orderBy('tgl_lelang', 'desc')->paginate(5);
         return view('petugas.historyPetugas', compact('lelang', 'tgl_lelang', 'tanggal_akhir'));
     }
     public function historypetugascari(Request $request)
@@ -121,7 +122,7 @@ class lelangController extends Controller
         $petugasId = Auth::guard('petugas')->id();
         $lelang = Lelang::with(['barang', 'pemenang'])->where('id_petugas', $petugasId)->where('status', 'ditutup')->whereHas('barang', function ($query) use ($cari) {
             $query->where('nama_barang', 'like', "%" . $cari . "%");
-        })->get();
+        })->orderBy('id_lelang', 'desc')->paginate(5);
         $tgl_lelang = null;
         $tanggal_akhir = null;
 
@@ -134,16 +135,14 @@ class lelangController extends Controller
         $petugasId = Auth::guard('petugas')->id();
         $filtered = HistoryLelang::whereHas('lelang', function ($q) use ($petugasId) {
             $q->where('id_petugas', $petugasId);
-        })
-            ->whereHas('lelang', function ($q) {
-                $q->where('status', 'ditutup');
-            })
-            ->when($tgl_lelang && $tanggal_akhir, function ($query) use ($tgl_lelang, $tanggal_akhir) {
-                $query->whereHas('lelang', function ($q) use ($tgl_lelang, $tanggal_akhir) {
-                    $q->whereBetween('tgl_lelang', [$tgl_lelang, $tanggal_akhir]);
-                });
-            })->pluck('id_lelang')->unique();
-        $lelang = Lelang::with(['barang', 'pemenang'])->whereIn('id_lelang', $filtered)->get();
+        })->whereHas('lelang', function ($q) {
+            $q->where('status', 'ditutup');
+        })->when($tgl_lelang && $tanggal_akhir, function ($query) use ($tgl_lelang, $tanggal_akhir) {
+            $query->whereHas('lelang', function ($q) use ($tgl_lelang, $tanggal_akhir) {
+                $q->whereBetween('tgl_lelang', [$tgl_lelang, $tanggal_akhir]);
+            });
+        })->pluck('id_lelang')->unique();
+        $lelang = Lelang::with(['barang', 'pemenang'])->whereIn('id_lelang', $filtered)->orderBy('tgl_lelang', 'desc')->paginate(10);
 
         return view('petugas.historyPetugas', compact('lelang', 'tgl_lelang', 'tanggal_akhir'));
     }
@@ -151,24 +150,43 @@ class lelangController extends Controller
     public function laporanindex()
     {
         $petugas = Petugas::where('nama_petugas', '!=', 'admin')->get();
-        $laporan = Lelang::with(['barang', 'pemenang', 'petugas'])->get()->map(function ($item) {
+        // $petugas = Petugas::where('nama_petugas', '!=', 1)->get();
+        $laporan = Lelang::with(['barang', 'pemenang', 'petugas'])->orderBy('id_lelang', 'asc')->get()->map(function ($item) {
             $adaPemenang = HistoryLelang::where('id_lelang', $item->id_lelang)->exists();
 
             if ($item->status == 'dibuka') {
-                $item->status_view = 'PROSES LELANG';
-                $item->harga_bid_view = null;
+                if ($adaPemenang) {
+                    $item->status_view = 'PROSES LELANG';
+                    $item->harga_bid_view = null;
+                    $item->pemenang_view = $item->pemenang->name;
+                } else {
+                    $item->status_view = 'DIBUKA';
+                }
             } elseif ($item->status == 'ditutup' && !$adaPemenang) {
                 $item->status_view = 'DITUTUP';
                 $item->harga_bid_view = null;
-                $item->pemenang->name = null;
+                $item->pemenang_view = null;
             } else {
                 $item->status_view = 'SELESAI';
                 $item->harga_bid_view = $item->harga_akhir;
+                $item->pemenang_view =  $item->pemenang->name;
             }
             return $item;
         });
         $grandtotal = $laporan->where('status', 'ditutup')->whereNotNull('id_masyarakat')->sum('harga_akhir');
-        return view('petugas.laporanAdmin', compact('laporan', 'petugas', 'grandtotal'));
+        $perPage = 10; 
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+
+        $currentItems = $laporan->slice(($currentPage - 1) * $perPage, $perPage)->all();
+
+        $laporanPaginated = new LengthAwarePaginator(
+            $currentItems,
+            $laporan->count(),
+            $perPage,
+            $currentPage,
+            ['path' => request()->url()]
+        );
+        return view('petugas.laporanAdmin', compact('laporanPaginated','laporan', 'petugas', 'grandtotal'));
     }
 
     public function filter(Request $request)
@@ -177,28 +195,47 @@ class lelangController extends Controller
         $tgl_lelang = $request->input('tgl_lelang');
         $tanggal_akhir = $request->input('tanggal_akhir');
         $petugas = Petugas::where('nama_petugas', '!=', 'admin')->get();
+        // $petugas = Petugas::where('nama_petugas', '!=', 1)->get();
+
         $laporan = Lelang::with(['barang', 'pemenang', 'petugas'])->when($petugasId, function ($q) use ($petugasId) {
             $q->where('id_petugas', $petugasId);
         })->when($tgl_lelang && $tanggal_akhir, function ($q) use ($tgl_lelang, $tanggal_akhir) {
             $q->whereBetween('tgl_lelang', [$tgl_lelang, $tanggal_akhir]);
-        })->get()->map(function ($item) {
+        })->orderBy('id_lelang', 'asc')->get()->map(function ($item) {
             $adaBid = HistoryLelang::where('id_lelang', $item->id_lelang)->exists();
             if ($item->status == 'dibuka') {
-                $item->status_view = 'PROSES LELANG';
-                $item->harga_bid_view = null;
+                if ($adaBid) {
+                    $item->status_view = 'PROSES LELANG';
+                    $item->harga_bid_view = null;
+                    $item->pemenang_view = $item->pemenang->name;
+                } else {
+                    $item->status_view = 'DIBUKA';
+                }
             } elseif ($item->status == 'ditutup' && !$adaBid) {
                 $item->status_view = 'DITUTUP';
                 $item->harga_bid_view = null;
-                $item->pemenang->name = null;
+                $item->pemenang_view = null;
             } else {
                 $item->status_view = 'SELESAI';
                 $item->harga_bid_view = $item->harga_akhir;
+                $item->pemenang_view =  $item->pemenang->name;
             }
             return $item;
         });
         $grandtotal = $laporan->filter(fn($lelang_status) => $lelang_status->status_view == 'SELESAI')->sum('harga_bid_view');
+        $perPage = 10; 
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
 
-        return view('petugas.laporanAdmin', compact('laporan', 'petugas', 'petugasId', 'tgl_lelang', 'tanggal_akhir', 'grandtotal'));
+        $currentItems = $laporan->slice(($currentPage - 1) * $perPage, $perPage)->all();
+
+        $laporanPaginated = new LengthAwarePaginator(
+            $currentItems,
+            $laporan->count(),
+            $perPage,
+            $currentPage,
+            ['path' => request()->url()]
+        );
+        return view('petugas.laporanAdmin', compact('laporan','laporanPaginated', 'petugas', 'petugasId', 'tgl_lelang', 'tanggal_akhir', 'grandtotal'));
     }
     public function laporan()
     {
@@ -206,7 +243,7 @@ class lelangController extends Controller
         $lelang = Lelang::with(['barang', 'pemenang'])
             ->where('id_petugas', $petugasId)
             ->where('status', 'ditutup')
-            ->get();
+            ->orderBy('id_lelang')->paginate(5);
 
         return view('petugas.laporan', compact('lelang'));
     }
@@ -228,21 +265,28 @@ class lelangController extends Controller
     }
     public function cetaklaporanpetugas()
     {
-        // $petugas = Petugas::where('nama_petugas', '!=', 'admin')->get();
+        $petugas = Petugas::where('nama_petugas', '!=', 'admin')->get();
+        // $petugas = Petugas::where('nama_petugas', '!=', 1)->get();
         $petugasId = Auth::guard('petugas')->id();
         $laporan = Lelang::with(['barang', 'pemenang', 'petugas'])->where('id_petugas', $petugasId)->get()->map(function ($item) {
             $adaPemenang = HistoryLelang::where('id_lelang', $item->id_lelang)->exists();
 
             if ($item->status == 'dibuka') {
-                $item->status_view = 'PROSES LELANG';
-                $item->harga_bid_view = null;
+                if ($adaPemenang) {
+                    $item->status_view = 'PROSES LELANG';
+                    $item->harga_bid_view = null;
+                    $item->pemenang_view = $item->pemenang->name;
+                } else {
+                    $item->status_view = 'DIBUKA';
+                }
             } elseif ($item->status == 'ditutup' && !$adaPemenang) {
                 $item->status_view = 'DITUTUP';
                 $item->harga_bid_view = null;
-                $item->pemenang->name = null;
+                $item->pemenang_view = null;
             } else {
                 $item->status_view = 'SELESAI';
                 $item->harga_bid_view = $item->harga_akhir;
+                $item->pemenang_view =  $item->pemenang->name;
             }
             return $item;
         });
@@ -261,25 +305,62 @@ class lelangController extends Controller
             ->when($petugasId, function ($q) use ($petugasId) {
                 $q->where('id_petugas', $petugasId);
             })
-            ->when($tgl_lelang && $tgl_akhir, function ($q) use ($tgl_lelang, $tgl_akhir) {$q->whereBetween('tgl_lelang', [$tgl_lelang, $tgl_akhir]);
-            })->get()->map(function ($item) {$adaBid = HistoryLelang::where('id_lelang', $item->id_lelang)->exists();
+            ->when($tgl_lelang && $tgl_akhir, function ($q) use ($tgl_lelang, $tgl_akhir) {
+                $q->whereBetween('tgl_lelang', [$tgl_lelang, $tgl_akhir]);
+            })->orderBy('id_lelang', 'asc')->get()->map(function ($item) {
+                $adaBid = HistoryLelang::where('id_lelang', $item->id_lelang)->exists();
                 if ($item->status == 'dibuka') {
-                    $item->status_view = 'PROSES LELANG';
-                    $item->harga_bid_view = null;
+                    if ($adaBid) {
+                        $item->status_view = 'PROSES LELANG';
+                        $item->harga_bid_view = null;
+                        $item->pemenang_view = $item->pemenang->name;
+                    } else {
+                        $item->status_view = 'DIBUKA';
+                    }
                 } elseif ($item->status == 'ditutup' && !$adaBid) {
                     $item->status_view = 'DITUTUP';
                     $item->harga_bid_view = null;
-                    $item->masyarakat->name = null;
+                    $item->pemenang_view = null;
                 } else {
                     $item->status_view = 'SELESAI';
                     $item->harga_bid_view = $item->harga_akhir;
+                    $item->pemenang_view =  $item->pemenang->name;
                 }
                 return $item;
             });
-        $grandtotal = $laporan->filter(fn($data) =>$data->status_view == 'SELESAI')->sum('harga_bid_view');
+        $grandtotal = $laporan->filter(fn($data) => $data->status_view == 'SELESAI')->sum('harga_bid_view');
         $totallelang = $laporan->count();
+        $perPage = 10; 
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+
+        $currentItems = $laporan->slice(($currentPage - 1) * $perPage, $perPage)->all();
+
+        $laporanPaginated = new LengthAwarePaginator(
+            $currentItems,
+            $laporan->count(),
+            $perPage,
+            $currentPage,
+            ['path' => request()->url()]
+        );
         $petugasTerpilih = $petugasId;
-        return view('petugas.cetapadmin', compact('laporan','grandtotal','totallelang','petugasTerpilih','tgl_lelang','tgl_akhir'
+        return view('petugas.cetapadmin', compact(
+            'laporan',
+            'grandtotal',
+            'totallelang',
+            'petugasTerpilih',
+            'tgl_lelang',
+            'tgl_akhir',
+            'laporanPaginated'
         ));
     }
+    public function caribarangsearch(Request $request)
+    {
+        $cari = $request->input('cari');
+        $petugasId = Auth::guard('petugas')->id();
+        $barangcari = Lelang::with('barang')->where('id_petugas', $petugasId)->whereHas('barang', function ($query) use ($cari) {
+            $query->where('nama_barang', 'like', '%' . $cari . '%');
+        })->orderBy('id_lelang', 'desc') ->paginate(5);;
+        return view('petugas.lelangform', compact('cari', 'barangcari'));
+    }
+    
 }

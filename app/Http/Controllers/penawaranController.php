@@ -25,7 +25,7 @@ class penawaranController extends Controller
 
         return view('masyarakat.penawaran', compact('lelang'));
     }
-    
+
     public function bid($id_lelang)
     {
         $lelang = Lelang::with('barang')->findOrFail($id_lelang);
@@ -71,6 +71,19 @@ class penawaranController extends Controller
             ->orderBy('created_at', 'DESC')
             ->get()
             ->unique('id_lelang');
+        foreach ($history as $item) {
+            $lelang = $item->lelang;
+            $tertinggi = HistoryLelang::where('id_lelang', $item->id_lelang)->orderBy('penawaran_harga', 'DESC')->first();
+            if ($lelang->status == 'dibuka') {
+                $item->status_view = "PROSES";
+            } else {
+                if ($tertinggi && $tertinggi->id_masyarakat == $masyarakatId) {
+                    $item->status_view = "menang";
+                } else {
+                    $item->status_view = "kalah";
+                }
+            }
+        }
         return view('masyarakat.dashboard', compact('history'));
     }
     public function historyDetail($id_lelang)
@@ -88,7 +101,7 @@ class penawaranController extends Controller
                 $isWinner = true;
             }
         }
-        return view('masyarakat.detailHistory', compact('lelang', 'history', 'bidKamu', 'isWinner', 'proses','highestBid'));
+        return view('masyarakat.detailHistory', compact('lelang', 'history', 'bidKamu', 'isWinner', 'proses', 'highestBid'));
     }
     public function cari(Request $request)
     {
@@ -115,17 +128,33 @@ class penawaranController extends Controller
     {
         $userId = Auth::guard('masyarakat')->id();
         $status = $request->input('status');
-        $history = HistoryLelang::with(['lelang.barang'])->where('id_masyarakat', $userId)->select('id_lelang', 'id_barang', 'id_masyarakat', 'penawaran_harga', 'created_at')->orderBy('created_at', 'DESC')->get()->unique('id_lelang');
+
+        $history = HistoryLelang::with(['lelang.barang'])->where('id_masyarakat', $userId)->select('id_lelang', 'id_barang', 'id_masyarakat', 'penawaran_harga', 'created_at')->orderBy('created_at', 'DESC')->get()->unique('id_lelang')->values();
+        foreach ($history as $item) {
+
+            $lelang = $item->lelang;
+
+            $highestBid = HistoryLelang::where('id_lelang', $item->id_lelang)
+                ->orderBy('penawaran_harga', 'DESC')
+                ->first();
+
+            if ($lelang->status == 'dibuka') {
+                $item->status_view = 'proses';
+            } else {
+                if ($highestBid && $highestBid->id_masyarakat == $userId) {
+                    $item->status_view = 'menang';
+                } else {
+                    $item->status_view = 'kalah';
+                }
+            }
+        }
         if (!$status) {
             return view('masyarakat.dashboard', compact('history', 'status'));
         }
-        $filtered = $history->filter(function ($item) use ($status, $userId) {
-            $highestBid = HistoryLelang::where('id_lelang', $item->id_lelang)->orderBy('penawaran_harga', 'DESC')->first();
-            $isWinner = $highestBid && $highestBid->id_masyarakat == $userId;
-            if ($status === 'menang') return $isWinner;
-            if ($status === 'kalah') return !$isWinner;
-            return true;
+        $filtered = $history->filter(function ($item) use ($status) {
+            return $item->status_view === $status;
         })->values();
+
         return view('masyarakat.dashboard', [
             'history' => $filtered,
             'status'  => $status,

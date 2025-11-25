@@ -19,7 +19,7 @@ return new class extends Migration
             $table->dateTime('tanggal_akhir')->nullable();
             $table->double('harga_awal')->nullable();
             $table->double('harga_akhir')->nullable();
-            $table->foreignId('id_masyarakat')->references('id_masyarakat')->on('masyarakat')->onDelete('cascade');
+            $table->foreignId('id_masyarakat')->nullable()->references('id_masyarakat')->on('masyarakat')->onDelete('cascade');
             $table->enum('status', ['dibuka', 'ditutup'])->default('dibuka');
             $table->timestamps();
         });

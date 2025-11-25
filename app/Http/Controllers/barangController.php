@@ -11,7 +11,7 @@ use function Symfony\Component\Clock\now;
 class barangController extends Controller
 {
     public function index(){
-        $barang = Barang::all();
+        $barang = Barang::orderBy('id_barang')->paginate(5);
         return view('petugas.barangdata', compact('barang'));
     }
     public function create(){
@@ -70,7 +70,7 @@ class barangController extends Controller
     public function cari(Request $request)
     {
         $cari = $request->cari;
-        $barang = Barang::where('nama_barang', 'like', "%" . $cari . "%")->get();
+        $barang = Barang::where('nama_barang', 'like', "%" . $cari . "%")->orderBy('id_barang')->paginate(5);
         return view('petugas.barangdata', compact('barang','cari'));
     }
 }

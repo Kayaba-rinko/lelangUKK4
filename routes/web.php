@@ -4,6 +4,7 @@ use App\Http\Controllers\authController;
 use App\Http\Controllers\userController;
 use App\Http\Controllers\petugasController;
 use App\Http\Controllers\barangController;
+use App\Http\Controllers\laporanController;
 use App\Http\Controllers\lelangController;
 use App\Http\Controllers\penawaranController;
 use Faker\Guesser\Name;
@@ -38,9 +39,9 @@ Route::middleware(['auth:masyarakat', 'isMasyarakat'])->group(function () {
     Route::get('masyarakat/history/cari/filter', [penawaranController::class, 'historyStatus'])->name('masyarakat.history.filter');
 });
 Route::middleware(['auth:petugas', 'isPetugas'])->group(function () {
-    Route::get('/petugas/dashboard', function () {
-        return view('petugas.dashboard');
-    })->name('petugas.dashboard');
+
+    Route::get('/petugas/dashboard', [laporanController::class, 'index'])->name('petugas.dashboard');
+
     Route::get('/petugas/userdata', [userController::class, 'index'])->name('petugas.userdata');
     Route::get('/petugas/userdata/create', [userController::class, 'create'])->name('petugas.userdata.create');
     Route::post('/petugas/userdata/store', [userController::class, 'store'])->name('petugas.userdata.store');
@@ -71,6 +72,8 @@ Route::middleware(['auth:petugas', 'isPetugas'])->group(function () {
     Route::get('/petugas/bukaTutup/{id_lelang}/edit', [lelangController::class, 'edit'])->name('petugas.bukaTutup.edit');
     Route::put('/petugas/bukaTutup/{id_lelang}', [lelangController::class, 'update'])->name('petugas.bukaTutup.update');
     Route::delete('/petugas/bukaTutup/{id_lelang}', [lelangController::class, 'destroy'])->name('petugas.bukaTutup.destroy');
+
+    // Route::get('/petugas/b')
 
     Route::put('/petugas/bukaTutup/{id_lelang}/tutup', [lelangController::class, 'tutuplelang'])->name('petugas.bukaTutup.tutup');
     Route::get('/petugas/bukaTutup/{id_lelang}/buka', [lelangController::class, 'bukalelang'])->name('petugas.bukaTutup.buka');

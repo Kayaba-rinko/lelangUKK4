@@ -109,7 +109,7 @@
                 $pet = \App\Models\Petugas::find($petugasTerpilih);
             @endphp
 
-            <p><strong>Petugas:</strong> {{ $pet->nama_petugas ?? 'Tidak ditemukan' }}</p>
+            <p><strong>Petugas:</strong> {{ $pet->nama_petugas ?? 'Admin' }}</p>
 
         @elseif(!empty($tgl_lelang) && !empty($tanggal_akhir))
             <p><strong>Data Antara:</strong>
@@ -124,7 +124,7 @@
             @endphp
 
             <p><strong>Semua Data</strong></p>
-            <p><strong>Petugas:</strong> {{ $pet->nama_petugas ?? 'Tidak ditemukan' }}</p>
+            <p><strong>Petugas:</strong> {{ $pet->nama_petugas ?? 'Admin' }}</p>
 
         @else
             <p><strong>Semua Data</strong></p>
@@ -141,9 +141,8 @@
                 <th class="d-none d-xl-table-cell">Tanggal lelang</th>
                 <th class="d-none d-xl-table-cell">Nama Barang</th>
                 <th class="d-none d-xl-table-cell">Harga barang</th>
-                <th class="d-none d-xl-table-cell">Harga Lelang</th>
+                <th class="d-none d-xl-table-cell">Harga Akhir</th>
                 <th class="d-none d-xl-table-cell">Nama Bid</th>
-                <th class="d-none d-xl-table-cell">Harga bid</th>
                 <th class="d-none d-xl-table-cell">Status</th>
             </tr>
         </thead>
@@ -151,32 +150,19 @@
             @foreach ($laporan as $lapo)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td class="d-none d-xl-table-cell">{{ $lapo->petugas->nama_petugas }}</td>
-                    <td class="d-none d-xl-table-cell">{{ $lapo->tgl_lelang }}</td>
-                    <td class="d-none d-xl-table-cell">{{ $lapo->barang->nama_barang }}</td>
-                    <td class="d-none d-xl-table-cell">Rp.
-                        {{number_format($lapo->barang->harga_awal, 0, ',', '.')}}
-                    </td>
-                    <td class="d-none d-xl-table-cell">Rp.
-                        {{number_format($lapo->harga_awal, 0, ',', '.')}}
-                    </td>
-                    @if ($lapo->status == 'dibuka')
-                        <td></td>
-                        <td></td>
-                        <td class="d-none d-xl-table-cell">Proses Lelang</td>
-                    @else
-                        @if ($lapo->id_masyarakat != null)
-                            <td class="d-none d-xl-table-cell">{{ $lapo->masyarakat->name }}</td>
-                            <td class="d-none d-xl-table-cell">Rp.
-                                {{number_format($lapo->harga_akhir, 0, ',', '.')}}
-                            </td>
-                            <td class="d-none d-xl-table-cell">Selesai</td>
+                    <td>{{ $lapo->petugas->nama_petugas ?? 'Data Dihapus' }}</td>
+                    <td>{{ \Carbon\Carbon::parse($lapo->tgl_lelang)->format('d-m-Y') }}</td>
+                    <td>{{ $lapo->barang->nama_barang }}</td>
+                    <td>Rp. {{ number_format($lapo->barang->harga_awal, 0, ',', '.') }}</td>
+                    <td>
+                        @if($lapo->harga_bid_view)
+                            Rp.{{ number_format($lapo->harga_bid_view, 0, ',', '.') }}
                         @else
-                            <td></td>
-                            <td></td>
-                            <td class="d-none d-xl-table-cell">Ditutup</td>
+                            -
                         @endif
-                    @endif
+                    </td>
+                    <td>{{ $lapo->pemenang_view ?? '-' }}</td>
+                    <td>{{ $lapo->status_view }}</td>
                 </tr>
             @endforeach
         </tbody>
@@ -185,31 +171,39 @@
         <div class="total-box">
             <label>Total Keseluruhan :</label><br>
             <strong>Rp {{ number_format($grandtotal, 0, ',', '.') }}</strong>
+            <br>
+            <br>
+        </div>
+    </div>
+    <div class="total-wrapper">
+        <div class="total-box">
+            <label>Petugas : </label>
+            <strong>
+            @php
+            $pet = \App\Models\Petugas::find($petugasTerpilih);
+            @endphp
+            <p>{{ $pet->nama_petugas ?? 'Admin' }}</p>
+            </strong>
         </div>
     </div>
 </body>
 
 <script>
-    // Timer untuk pop up muncul
     const countdown = 1;
-    // Menghitung mundur timer + pop up print muncul
     function startCountdown() {
         let timeLeft = countdown;
         const countdownInterval = setInterval(() => {
-            console.log(Printing in ${timeLeft} seconds...);
+            console.log(`Printing in ${timeLeft} seconds...`); 
             timeLeft--;
-
             if (timeLeft < 0) {
                 clearInterval(countdownInterval);
                 window.print();
             }
-        }, 2000);
+        }, 1000); 
     }
-    // Tutup tab otomatis saat pop up tertutup
     window.onafterprint = function () {
-        window.close(); // Close the tab
+        window.close(); 
     };
-    // Memulai program
     window.onload = startCountdown;
 </script>
 
