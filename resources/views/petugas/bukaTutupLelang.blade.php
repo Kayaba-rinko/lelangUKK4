@@ -6,11 +6,13 @@
         <div class="header">
             <h1>Buka & Tutup Lelang</h1>
             <div class="header-right">
-                <form action="{{ route('petugas.bukaTutup.cari') }}" class="search-box">
+                <div class="unified-action-box">
+                <form action="{{ route('petugas.bukaTutup.cari') }}" class="search-box no-bg">
                     <input style="font-size:16px" type="text" name="cari" placeholder="Cari Lelang..."value="{{ request('cari') }}">
                     <button type="submit" class="btn-search">🔍</button>
                 </form>
-                <a href="{{ route('petugas.bukaTutup.create') }}" class="btn-primary">Tambah Lelang</a>
+                <a href="{{ route('petugas.bukaTutup.create') }}" class="btn-primary tambah-btn">Tambah Lelang</a>
+            </div>
             </div>
         </div>
 

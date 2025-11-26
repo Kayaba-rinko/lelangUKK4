@@ -175,6 +175,7 @@
             <br>
         </div>
     </div>
+    {{-- bagian tanda tanganz --}}
     <div class="total-wrapper">
         <div class="total-box">
             <label>Petugas : </label>

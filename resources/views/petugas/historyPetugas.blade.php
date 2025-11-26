@@ -4,18 +4,25 @@
     <div class="main-content">
         <div class="header">
             <h1>History Lelang Petugas</h1>
-            <div class="header-actions" style="display: flex; align-items:center; gap: 15px;">
-                <form action="{{ route('petugas.historyPetugas.cari') }}"class="search-box"style="display: flex;align-items:center;">
-                    <input style="font-size:16px" type="text" name="cari" placeholder="Cari History..."value="{{ request('cari') }}">
-                    <button type="submit" class="btn-search">🔍</button>
-                </form>
-                <form action="{{ route('petugas.historyPetugas.filter') }}" method="GET" class="search-box" style="display: flex; align-items:center; gap:10px; padding:6px 10px;">
-                    <label for="tgl_lelang" style="font-size:16px;">Dari:</label>
-                    <input type="date" name="tgl_lelang" style="font-size: 16px"value="{{ request('tgl_lelang') ?? ($tgl_lelang ?? '') }}" required>
-                    <label for="tanggal_akhir" style="font-size:16px;">Sampai:</label>
-                    <input type="date" name="tanggal_akhir" style="font-size: 16px"value="{{ request('tanggal_akhir') ?? ($tanggal_akhir ?? '') }}" required>
-                    <button type="submit" class="btn-search">Filter</button>
-                </form>
+            <div class="header-actions">
+                <div class="unified-filter-bar">
+                    <form action="{{ route('petugas.historyPetugas.cari') }}" class="filter-section">
+                        <input type="text" name="cari" placeholder="Cari History..." value="{{ request('cari') }}">
+                        <button type="submit" class="btn-search icon-btn">🔍</button>
+                    </form>
+                    <div class="vertical-sep"></div>
+                    <form action="{{ route('petugas.historyPetugas.filter') }}" method="GET" class="filter-section date-section">
+                        <div class="input-group">
+                            <label for="tgl_lelang">Dari:</label>
+                            <input type="date" name="tgl_lelang" value="{{ request('tgl_lelang') ?? ($tgl_lelang ?? '') }}" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="tanggal_akhir">Sampai:</label>
+                            <input type="date" name="tanggal_akhir" value="{{ request('tanggal_akhir') ?? ($tanggal_akhir ?? '') }}" required>
+                        </div>
+                        <button type="submit" class="btn-search">Filter</button>
+                    </form>
+                </div>
             </div>
         </div>
 

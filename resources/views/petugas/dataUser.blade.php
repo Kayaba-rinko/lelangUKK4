@@ -5,11 +5,13 @@
         <div class="header">
             <h1>Data User</h1>
             <div class="header-right">
-                <form action="{{ route('petugas.userdata.cari') }}" class="search-box">
+                <div class="unified-action-box">
+                <form action="{{ route('petugas.userdata.cari') }}" class="search-box no-bg">
                     <input style="font-size: 16px" type="text" name="cari" placeholder="Cari Petugas..."value="{{ request('cari') }}">
                     <button type="submit" class="btn-search">🔍</button>
                 </form>
                 <a href="{{ route('petugas.userdata.create') }}" class="btn-primary tambah-btn">Tambah User</a>
+            </div>
             </div>
         </div>
 

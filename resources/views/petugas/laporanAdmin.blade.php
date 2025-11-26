@@ -18,19 +18,31 @@
 
         @if (isset($laporanPaginated) && $laporanPaginated->count() > 0)
             <div class="card-box">
-                <div
-                    class="header-card-box"style="display:flex; justify-content:space-between; align-items:center; gap:15px;">
-                    <h2 style="margin:0; font-size:18px;">Total : Rp.{{ number_format($grandtotal) }}</h2>
-                    <div style="display:flex; align-items:center; gap:15px;">
-                        <a class="btn-primary" href="{{ route('petugas.cetak.laporan.admin', ['petugas_id' => $petugasId ?? '','tgl_lelang' => $tgl_lelang ?? '','tanggal_akhir' => $tgl_akhir ?? '',]) }}"style="font-size: 16px; padding:12px;">Cetak</a>
-                        <form action="{{ route('admin.laporan.filter') }}" method="GET"class="search-box"style="display:flex; align-items:center; gap:10px;">
-                            <label for="tgl_lelang" style="font-size:16px;">Dari:</label>
-                            <input type="date" name="tgl_lelang"style="font-size:16px; padding:4px;"value="{{ $tgl_lelang ?? '' }}">
-                            <label for="tanggal_akhir" style="font-size:16px;">Sampai:</label>
-                            <input type="date" name="tanggal_akhir"style="font-size:16px; padding:4px;"value="{{ $tgl_akhir ?? '' }}">
-                            <button type="submit" class="btn-search" style="padding:6px 10px;">Filter</button>
-                        </form>
+                <div class="unified-total-bar">
+                    <div class="total-section">
+                        <span class="label">Total :</span>
+                        <span class="amount">Rp.{{ number_format($grandtotal) }}</span>
                     </div>
+                    <div class="vertical-sep"></div>
+                    <form action="{{ route('admin.laporan.filter') }}" method="GET" class="filter-section">
+                        <div class="input-group">
+                            <label for="tgl_lelang">Dari:</label>
+                            <input type="date" name="tgl_lelang" value="{{ $tgl_lelang ?? '' }}">
+                        </div>
+                        <div class="input-group">
+                            <label for="tanggal_akhir">Sampai:</label>
+                            <input type="date" name="tanggal_akhir" value="{{ $tgl_akhir ?? '' }}">
+                        </div>
+                        <button type="submit" class="btn-search small-btn">Filter</button>
+                    </form>
+                    <div class="vertical-sep"></div>
+                    <a href="{{ route('petugas.cetak.laporan.admin', [
+                        'petugas_id'   => $petugasId ?? '',
+                        'tgl_lelang'   => $tgl_lelang ?? '',
+                        'tanggal_akhir'=> $tanggal_akhir ?? '',
+                    ]) }}" class="btn-primary btn-cetak">
+                        Cetak Laporan
+                    </a>
                 </div>
                 <table class="table-dark" id="dataTable">
                     <thead>
