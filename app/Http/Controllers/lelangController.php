@@ -149,8 +149,8 @@ class lelangController extends Controller
     // laporan admin
     public function laporanindex()
     {
-        $petugas = Petugas::where('nama_petugas', '!=', 'admin')->get();
-        // $petugas = Petugas::where('nama_petugas', '!=', 1)->get();
+        // $petugas = Petugas::where('nama_petugas', '!=', 'admin')->get();
+        $petugas = Petugas::where('id_level', '!=', 1)->get();
         $laporan = Lelang::with(['barang', 'pemenang', 'petugas'])->orderBy('id_lelang', 'asc')->get()->map(function ($item) {
             $adaPemenang = HistoryLelang::where('id_lelang', $item->id_lelang)->exists();
 
@@ -194,8 +194,8 @@ class lelangController extends Controller
         $petugasId = $request->input('petugas_id');
         $tgl_lelang = $request->input('tgl_lelang');
         $tanggal_akhir = $request->input('tanggal_akhir');
-        $petugas = Petugas::where('nama_petugas', '!=', 'admin')->get();
-        // $petugas = Petugas::where('nama_petugas', '!=', 1)->get();
+        // $petugas = Petugas::where('nama_petugas', '!=', 'admin')->get();
+        $petugas = Petugas::where('id_level', '!=', 1)->get();
 
         $laporan = Lelang::with(['barang', 'pemenang', 'petugas'])->when($petugasId, function ($q) use ($petugasId) {
             $q->where('id_petugas', $petugasId);
@@ -265,8 +265,8 @@ class lelangController extends Controller
     }
     public function cetaklaporanpetugas()
     {
-        $petugas = Petugas::where('nama_petugas', '!=', 'admin')->get();
-        // $petugas = Petugas::where('nama_petugas', '!=', 1)->get();
+        // $petugas = Petugas::where('nama_petugas', '!=', 'admin')->get();
+        $petugas = Petugas::where('id_level', '!=', 1)->get();
         $petugasId = Auth::guard('petugas')->id();
         $laporan = Lelang::with(['barang', 'pemenang', 'petugas'])->where('id_petugas', $petugasId)->get()->map(function ($item) {
             $adaPemenang = HistoryLelang::where('id_lelang', $item->id_lelang)->exists();
